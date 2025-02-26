@@ -1,21 +1,19 @@
-import UtilityAnalysisInteraction from "../../components/UtilityAnalysisInteraction";
+import ShowAllProvidersWithScore from '@/components/ShowAllProvidersWithScore';
 import { createClient } from '@/utils/supabase/server';
 import { cookies } from 'next/headers';
 
+export default async function Index() {
+    const cookieStore = cookies();
+    const supabase = createClient(cookieStore);
 
-const UtilityAnalysis = async () => {
-  
-  const cookieStore = cookies()
-  const supabase = createClient(cookieStore);
-  const { data: crowdfundingProvider } = await supabase.from("crowdfundingProvider").select();
+    console.log("Fetching providers...");
+    const { data: providers, error } = await supabase.from("providers").select();
 
-  return (
-    <div className="container mx-auto px-4 sm:px-8">
-      <div className="py-8">
-        <UtilityAnalysisInteraction crowdfundingProviderData={crowdfundingProvider} />
-      </div>
-    </div>
-  );
-};
+    if (error) {
+        console.error("Error fetching providers:", error);
+    }
 
-export default UtilityAnalysis;
+    return (
+        <ShowAllProvidersWithScore providers={providers ?? []} />
+    );
+}

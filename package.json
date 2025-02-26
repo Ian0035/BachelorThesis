@@ -8,12 +8,17 @@
     "clear_jest": "jest --clearCache"
   },
   "dependencies": {
+    "@emotion/react": "^11.14.0",
+    "@emotion/styled": "^11.14.0",
     "@flaticon/flaticon-uicons": "^3.0.0",
+    "@mui/icons-material": "^6.4.5",
+    "@mui/material": "^6.4.5",
     "@supabase/ssr": "latest",
     "@supabase/supabase-js": "latest",
     "autoprefixer": "10.4.15",
     "chai": "^5.0.0",
     "geist": "^1.0.0",
+    "lucide-react": "^0.475.0",
     "next": "latest",
     "postcss": "8.4.29",
     "react": "18.2.0",
