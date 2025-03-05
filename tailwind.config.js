@@ -17,4 +17,6 @@ module.exports = {
     },
   },
   plugins: [],
+  darkMode: "class" // Ensures dark mode is controlled via a class
 }
+

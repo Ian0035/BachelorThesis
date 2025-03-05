@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/utils/supabase/server";
 import { cookies } from "next/headers";
 
-let storedRatings: Record<string, number> | null = null;
+let storedRatings: Record<string, number>;
 let rankedProviders: any[] | null = null; // Store ranked results globally
 
 export async function POST(req: NextRequest) {
