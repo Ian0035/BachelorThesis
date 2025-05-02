@@ -24,7 +24,7 @@ const ShowAllProvidersWithScore = ({ providers = [] }: { providers?: Provider[] 
 
     try {
       console.log('Button clicked: Fetching scraped data...');
-      const response = await fetch('/api/scrape', {
+      const response = await fetch('/api/scrape/route', {
         method: "GET",
         headers: { "Content-Type": "application/json" }
       });
