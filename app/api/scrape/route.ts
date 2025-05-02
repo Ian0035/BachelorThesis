@@ -1,11 +1,13 @@
-// Add this at the top of route.ts
 'use server';
 
 import chromium from '@sparticuz/chromium';
-import puppeteer, { Browser } from 'puppeteer-core';
+import type { Browser } from 'puppeteer-core'; // ✅ Import type only
+let puppeteer: typeof import('puppeteer-core');
 
 export async function GET() {
+  puppeteer = (await import('puppeteer-core')).default as any;;
   let browser: Browser | null = null;
+
 
   async function isCertifiedProvider(providerName: string) {
     if (!browser) {
