@@ -33,7 +33,8 @@ interface review {
 }
 
 export default function ProviderDetails() {
-  const { id } = useParams();
+  const params = useParams();
+  const id = params?.id as string;
   const [provider, setProvider] = useState<Provider | null>(null);
   const [storedRatings, setStoredRatings] = useState<StoredRatings | null>(null);
   const [reviews, setReviews] = useState<review[] | null>(null);
