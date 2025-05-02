@@ -1,28 +1,29 @@
-const puppeteer = require('puppeteer');
+import chromium from '@sparticuz/chromium';
+import puppeteer, { Browser } from 'puppeteer-core';
 
 export async function GET() {
-  const browser = await puppeteer.launch({ headless: false });
-  const page = await browser.newPage();
+  let browser: Browser | null = null;
 
-  async function isCertifiedProvider(providerName: string | number | boolean) {
+  async function isCertifiedProvider(providerName: string) {
+    if (!browser) {
+      throw new Error('Browser instance is not initialized');
+    }
+    const page = await browser.newPage();
     const url = `https://www.cfainstitute.org/programs/cfa-program/prep-providers#q=${encodeURIComponent(providerName)}&sortCriteria=%40titlebasic%20ascending`;
+
     await page.goto(url, { waitUntil: 'domcontentloaded' });
 
-    // Wait a bit for the dynamic content to render
+    // Wait for dynamic content to load
     await new Promise(resolve => setTimeout(resolve, 3000));
-
-    // Scroll down to trigger lazy loading
     await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
-    await new Promise(resolve => setTimeout(resolve, 1000)); 
+    await new Promise(resolve => setTimeout(resolve, 1000));
+    await page.waitForSelector('atomic-result-list');
 
-    await page.waitForSelector('atomic-result-list'); // wait for the top-level component
-
-
-    const LinkText = await page.evaluate(() => {
-      // Helper function to safely access shadow roots
+    const linkText = await page.evaluate(() => {
       function getShadowRoot(el: Element | null) {
-        return el ? el.shadowRoot : null;
+        return el?.shadowRoot ?? null;
       }
+
       const atomicResultList = document.querySelector('atomic-result-list');
       const resultListShadow = getShadowRoot(atomicResultList);
       if (!resultListShadow) return 'atomic-result-list shadowRoot missing';
@@ -36,17 +37,21 @@ export async function GET() {
       if (!itemShadow) return 'prep-providers-result-item shadowRoot missing';
 
       const link = itemShadow.querySelector('div > div > div > div.content__title > a');
-      if (!link) return 'link not found';
-
-      return link.textContent ? link.textContent.trim().toLowerCase() : ''; // Get the text content of the link and convert to lowercase, or return an empty string if null
+      return link?.textContent?.trim().toLowerCase() ?? '';
     });
-    if (typeof providerName === 'string' && LinkText === providerName.toLowerCase()) {
-        return true; // Provider is certified
-    }
-      return false; // Provider is not certified')       
-    }
+
+    await page.close();
+    return linkText === providerName.toLowerCase();
+  }
 
   try {
+    browser = await puppeteer.launch({
+      args: chromium.args,
+      defaultViewport: chromium.defaultViewport,
+      executablePath: await chromium.executablePath(),
+      headless: chromium.headless,
+    });
+
     const providers = [
       { id: 1, name: 'kaplan' },
       { id: 2, name: 'fitch learning' },
@@ -59,6 +64,7 @@ export async function GET() {
       const certified = await isCertifiedProvider(provider.name);
       results.push({
         id: provider.id,
+        name: provider.name,
         certified: certified ? 'Certified' : 'Not Certified',
       });
     }
@@ -72,7 +78,10 @@ export async function GET() {
 
   } catch (err) {
     console.error('Scraping error:', err);
-    await browser.close();
-    return new Response(JSON.stringify({ error: 'Scraping failed' }), { status: 500 });
+    if (browser) await browser.close();
+    return new Response(JSON.stringify({ error: 'Scraping failed' }), {
+      status: 500,
+      headers: { "Content-Type": "application/json" },
+    });
   }
 }
