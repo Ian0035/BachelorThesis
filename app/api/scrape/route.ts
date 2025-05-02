@@ -1,3 +1,6 @@
+// Add this at the top of route.ts
+'use server';
+
 import chromium from '@sparticuz/chromium';
 import puppeteer, { Browser } from 'puppeteer-core';
 
