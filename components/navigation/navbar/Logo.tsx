@@ -23,7 +23,7 @@ const Logo = () => {
   return (
     <>
       <Link href="/">
-        <p className="text-2xl text-cr-darkgrey dark:text-white">CFA Course Providers-Comparison</p>
+        <p className="text-4xl text-cr-darkgrey dark:text-white">CFA Companion</p>
       </Link>
     </>
   );

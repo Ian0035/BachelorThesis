@@ -21,6 +21,45 @@
 .animate-in {
   animation: animateIn 0.3s ease 0.15s both;
 }
+.slick-slide > div {
+  margin: 0 10px;
+}
+.slick-prev:before, .slick-next:before{
+  color: rgb(34 197 94) !important;
+  font-size: 30px !important;
+}
+.hidecardswhentosmall{
+  display: none !important;
+}
+.showcardswhenbig{
+  display: block !important;
+}
+.mobiledropdownbutton{
+  height: auto !important;
+  width: auto !important;
+  background-color: transparent !important;
+  border: none !important;
+}
+@media (max-width: 490px) {
+  .hidecardswhentosmall{
+    display: block !important;
+  }
+  .showcardswhenbig{
+    display: none !important;
+  }
+}
+@media (max-width: 640px) {
+  .slick-slide > div {
+    margin: 0 5px;
+  }
+  div.slick-slider > button::before{
+    color: rgb(197, 192, 34) !important;
+    font-size: 30px !important;
+    display: none;
+  
+  }
+}
+
 
 @keyframes animateIn {
   from {

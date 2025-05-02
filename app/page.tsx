@@ -1,164 +1,243 @@
-"use client";
+"use client"; // This forces Next.js to treat this file as a client component
 
-import { useState, useEffect } from "react";
-import { Tooltip } from "@mui/material";
-import { Info } from "lucide-react";
-import { useRouter } from "next/navigation"; // Import Next.js router
+import React, { useEffect } from 'react';
+import Link from 'next/link';
+import { motion } from "framer-motion";
+import Slider from "react-slick";
+import "slick-carousel/slick/slick.css"; 
+import "slick-carousel/slick/slick-theme.css"; // Import styles
+import { useRouter } from 'next/navigation';
+import { useTransition } from "react";
 
+export default function Index() {   
+    const [isPending, startTransition] = useTransition();
+    const router = useRouter();
+ 
+    const settings = {
+        dots: false,
+        infinite: true,
+        speed: 500,
+        autoplay: true, // Enable autoplay
+        autoplaySpeed: 2000, // Delay between slide transitions (in milliseconds)
+        slidesToShow: 3,
+        slidesToScroll: 1
+    };
+    const cards = [
+        {
+          id: 1,
+          title: 'Content Coverage',
+          description: 'Ensuring comprehensive content coverage is crucial for mastering all key concepts and avoiding knowledge gaps. Without thorough coverage, students may struggle with advanced topics, leading to a weaker overall understanding.',
+        },
+        {
+          id: 2,
+          title: 'Practice Resources',
+          description: 'Having ample practice resources is essential for reinforcing learning and building confidence in applying knowledge. Regular practice helps identify weak areas, improve problem-solving skills, and solidify concepts over time.',
+        },
+        {
+          id: 3,
+          title: 'Flexibility and Accessibility',
+          description: 'Learning should fit into your schedule, making flexible and accessible resources vital for consistent progress. The ability to study at your own pace and access materials on-demand ensures a smoother and more efficient learning experience.',
+        },
+        {
+          id: 4,
+          title: 'Student Support',
+          description: 'Access to reliable student support can make a significant difference in overcoming challenges and staying motivated. Whether through mentors, forums, or live Q&A sessions, having guidance can help clarify doubts and maintain engagement.',
+        },
+        {
+          id: 5,
+          title: 'Cost-effectiveness',
+          description: 'Investing in education should be affordable, ensuring that quality learning remains accessible to all. A well-structured cost-effective approach allows students to gain valuable knowledge without financial strain, making learning more sustainable.',
+        },
+      ];
 
-const categories = [
-  { name: "Content Coverage", shortdescription: "The comprehensiveness and relevance of the study materials provided by each course provider. Click to see more info...", description:"Content coverage refers to how well a CFA course provider’s study materials align with the official CFA curriculum. A high-quality course should comprehensively cover all topics outlined in the CFA Institute’s syllabus, ensuring that no important areas are overlooked. Depth of content is also important—study materials should go beyond just summarizing information and provide thorough explanations, examples, and real-world applications. Clarity of explanations plays a crucial role in helping candidates grasp complex financial concepts, while alignment with exam objectives ensures that the materials focus on the most relevant topics, weighted appropriately based on their importance in the actual CFA exam." },
-  { name: "Practice Resources", shortdescription: "The availability and quality of practice exams, quizzes, and question banks. Click to see more info...", description:"Practice resources are essential for reinforcing learning and improving exam performance. This includes access to practice questions, quizzes, mock exams, and other assessment tools. The quantity of practice questions matters, as candidates need sufficient exposure to different question types. The difficulty level should match the rigor of the actual CFA exam to provide an accurate sense of preparedness. The format of practice tests should also closely resemble the CFA exam structure, helping candidates become comfortable with its layout. Lastly, the relevance of practice questions ensures that they accurately reflect the types of questions that may appear on the exam." },
-  { name: "Flexibility and Accessibility", shortdescription: "How accessible the course is, including mobile support, offline access, and flexible scheduling. Click to see more info...", description:"Flexibility and accessibility refer to how convenient it is for candidates to access and use the study materials. Many CFA candidates balance exam preparation with work or other commitments, making it important for course providers to offer multiple learning formats, such as live classes, pre-recorded videos, mobile apps, or self-paced study options. The availability of a structured or flexible study schedule is another key consideration—some candidates may prefer a guided program with set deadlines, while others may need the freedom to study at their own pace. Accessibility across various devices, such as laptops, tablets, and smartphones, is also important, as well as the ability to download materials for offline use." },
-  { name: "Student Support", shortdescription: "The level of support provided, such as tutor assistance, discussion forums, and mentorship. Click to see more info...", description:"Student support refers to the level of assistance and guidance provided throughout the CFA exam preparation process. Access to instructors or tutors is crucial for addressing doubts and clarifying complex topics. Some courses offer discussion forums or study groups, where candidates can interact with peers, share insights, and seek help. Personalized feedback, such as progress tracking, customized study plans, or performance analytics, can further enhance the learning experience. Additional support services, such as one-on-one coaching, mentorship programs, or customer support, can also be valuable in ensuring candidates stay on track." },
-  { name: "Cost-effectiveness", shortdescription: "How well the course price aligns with the value and quality of the content. Click to see more info...", description:"Cost-effectiveness evaluates whether a CFA course provides good value for the price paid. This involves comparing the cost of the course against the quality and quantity of study materials, practice resources, and support services offered. Hidden costs should also be considered—some providers may charge extra for mock exams, tutor access, or additional materials. Discounts and promotions, such as early-bird pricing, group discounts, or returning-student offers, can help reduce costs. A refund policy is another important factor; some providers offer money-back guarantees if students are unsatisfied or fail the exam despite completing the course." },
-];
-
-export default function Index() {
-  const router = useRouter(); // Initialize router
-
-  const [scores, setScores] = useState<Record<string, number> | null>(null);
-  const [selectedMoreinfo, setSelectedMoreinfo] = useState< {name: string; description: string } | null>(null);
-  const [loading, setLoading] = useState(false);
-  const [errorMessage, setErrorMessage] = useState<string | null>(null);
-
-  // Generate random values for the sliders on mount
-  useEffect(() => {
-    const randomScores = Object.fromEntries(categories.map(({ name }) => [name, Math.floor(Math.random() * 101)]));
-    setScores(randomScores); // Set the random values after the component mounts
-  }, []);
-
-  // Handle slider value change
-  const handleChange = (category: string, value: number) => {
-    setScores((prev) => ({ ...prev, [category]: value }));
-  };
-
-  // Submit data to local backend (API route)
-  const handleSubmit = async () => {
-    setLoading(true);
-    setErrorMessage(null);
-
-    try {
-      const response = await fetch("/api/saveRatings", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(scores),
-      });
-
-      if (!response.ok) throw new Error("Failed to save scores.");
-
-      const data = await response.json();
-      // Store ranked providers in localStorage before navigating
-      localStorage.setItem("rankedProviders", JSON.stringify(data.rankedProviders));
-      // Redirect to ranking page after successful submission
-      router.push("/ShowRanking"); 
-
-    } catch (error) {
-      setErrorMessage("Error saving scores. Please try again.");
-      console.error("Save error:", error);
-    }
-
-    setLoading(false);
-  };
-
-  // If scores are not yet loaded, show a loading message
-  if (scores === null) {
-    return (
-      <div className="flex justify-center items-center h-screen">
-        <p>Loading...</p>
-      </div>
-    );
-  }
-
+    useEffect(() => {
+        router.prefetch('/tool');
+      }, [router]);
+      
+      
+    
 
   return (
-    <div className="bg-gray-100 dark:bg-zinc-800 w-10/12 flex flex-col items-center pt-4 pb-10">
-      <h1 className="text-3xl font-bold text-black dark:text-white mb-3">The Comparison Tool</h1>
-      <div className="bg-white dark:bg-zinc-800 p-6 rounded-lg shadow-lg dark:border dark:border-zinc-200 dark:shadow-lg dark:shadow-zinc-200 w-10/12">
-        <div className="inline-flex w-full">
-          <div className="w-2/5 mx-auto max-h-[452px]" id="form">
-            {categories.map(({ name, shortdescription, description }) => (
-              <div key={name} className="mb-4">
-                <div className="flex justify-between items-center">
-                  <label className="font-semibold">{name}</label>
-                  <Tooltip title={shortdescription} arrow>
-                    <Info size={18} className="cursor-pointer text-gray-600 dark:text-white" onClick={() => setSelectedMoreinfo({name, description})} />
-                  </Tooltip>
-                </div>
-                <input
-                  type="range"
-                  min="0"
-                  max="100"
-                  value={scores[name]}
-                  onChange={(e) => handleChange(name, Number(e.target.value))}
-                  className="accent-green-500 dark:accent-green-800 w-full mt-2"
-                />
-                <div className="text-right text-sm text-gray-600 dark:text-white">{scores[name]}</div>
-              </div>
-            ))}
-          </div>
-
-          {/* Vertical line */}
-          <div className="border-l-2 border-gray-300 mx-4" style={{ height: "auto" }} />
-
-
-          <div className="w-2/5 mx-auto max-h-[452px] overflow-y-auto [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-track]:bg-gray-100 [&::-webkit-scrollbar-thumb]:bg-gray-300 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-thumb]:rounded-full" id="information">
-            {/* Default text */}
-            {!selectedMoreinfo && (
-              <div className="p-2 rounded-lg mt-4">
-                <p className="font-bold text-gray-700 dark:text-white text-xl pb-1">Welcome To the comparison tool</p>
-                <p className="text-base/[1.45rem] dark:text-white text-gray-700 pb-4">
-                Are you looking for a <span className="font-bold"> CFA provider </span> that perfectly fits you? 
-                Look no further and try out the CFA course provider <span className="font-bold">comparison tool! </span> 
-                This tool is specially made to find the right CFA provider <span className="font-bold">for you</span>. 
-                <br />
-                Decide what factors are most important for you.
-                Rank the following items on a scale of <span className="font-bold"> 0 - 100 </span> based on importance.
-                </p>
-                <p className="text-base/[1.45rem] text-gray-700 dark:text-white">
-                <span className="font-bold">For example:</span> If the cost of the CFA course provider would play a big part in the final descion,
-                   you could give it a score of anywhere between 80 - 100. IF you don't really care about student support, give this a rating between 20 - 30.
-                   <br /> 
-                   The comparison tool works best if you're being honest with yourself and decide 
-                    how much you actually care about a certain factor.
-                </p>
-              </div>
-            )}
-            {/* Dynamic description */}
-            {selectedMoreinfo && (
-              <div className="bg-gray-100 dark:bg-zinc-600 p-4 rounded-lg text-gray-700 dark:text-white mt-4">
-                <div className="flex justify-between">
-                  <p className="text-xl font-bold pb-1">
-                    {selectedMoreinfo.name}
-                  </p>
-                <button
-                  onClick={() => setSelectedMoreinfo(null)}
-                  className="ml-2 text-red-500 font-semibold text-2xl"
-                >
-                  x
-                </button>
-                </div>
-                <p className="text-base">
-                <span className="font-bold">Info: </span>{selectedMoreinfo.description}
-                </p>
-              </div>
-            )}
-
-            {errorMessage && <p className="text-red-500 text-sm mt-2">{errorMessage}</p>}
-          </div>
-        </div>
-
-
-          <div className="w-40 mx-auto">
-            <button
-              onClick={handleSubmit}
-              className="mt-6 w-full bg-green-500 dark:bg-green-800 text-white py-2 rounded-lg hover:bg-green-600 dark:hover:bg-green-900 disabled:bg-gray-400"
-              disabled={loading}
+      <>
+      <div className="relative isolate w-full">
+            {/* Top Background - Positioned Top-Right */}
+            <div
+                aria-hidden="true"
+                className="absolute top-[5%] right-[5%] z-0 transform-gpu blur-3xl overflow-hidden sm:w-fit w-1/2"
             >
-              {loading ? "Calculating..." : "Calculate"}
-            </button>
+                <div
+                    style={{
+                        clipPath:
+                            "polygon(74.1% 44.1%, 100% 61.6%, 97.5% 26.9%, 85.5% 0.1%, 80.7% 2%, 72.5% 32.5%, 60.2% 62.4%, 52.4% 68.1%, 47.5% 58.3%, 45.2% 34.5%, 27.5% 76.7%, 0.1% 64.9%, 17.9% 100%, 27.6% 76.8%, 76.1% 97.7%, 74.1% 44.1%)",
+                    }}
+                    className="relative h-[500px] aspect-[1155/678] w-[36.125rem] bg-gradient-to-tr from-green-500 to-green-500 opacity-30 sm:w-[72.1875rem]"
+                />
+            </div>
+
+            {/* Main Content */}
+            <div className="relative isolate px-6 sm:pt-14 pt-4 lg:px-8">
+                <div className="mx-auto max-w-2xl py-10 sm:py-32 lg:pt-16 lg:pb-28">
+                    <div className="text-center relative z-10">
+                        <motion.h1
+                            initial={{ opacity: 0, y: 50 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ duration: 0.7, ease: "easeOut" }}
+                            className="md:text-7xl font-semibold tracking-tight text-gray-900 dark:text-gray-200 text-5xl"
+                        >
+                            Problem with <span className="text-green-500">choosing</span> the right{" "}
+                            <span className="text-green-500">CFA</span> provider?
+                        </motion.h1>
+                        <motion.p
+                            initial={{ opacity: 0, y: 50 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ duration: 0.7, ease: "easeOut", delay: 0.5 }}
+                            className="mt-8 text-lg font-medium text-gray-700 dark:text-gray-300 sm:text-xl"
+                        >
+                            Choosing the right <span className="text-green-500">provider</span> is
+                            important. Do our <span className="text-green-500">test</span> and find
+                            out which provider is the best for you.
+                        </motion.p>
+                    </div>
+
+                    <div className="mt-10 flex text-center items-center justify-center sm:gap-x-6 gap-x-3">
+                        <motion.div
+                            initial={{ opacity: 0, y: 50 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ duration: 0.5, ease: "easeOut", delay: 1 }}
+                        >
+                            <Link
+                                href="/tool"
+                                onClick={(e) => {
+                                    e.preventDefault();
+                                    startTransition(() => {
+                                    router.push('/tool');
+                                    });
+                                }}
+                                className="rounded-md bg-green-500 px-5 py-3 sm:text-base text-sm font-semibold text-white dark:text-gray-200 shadow-xs hover:bg-green-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-600"
+                            >
+                               {isPending ? "Loading..." : "Do the test"}
+                            </Link>
+                        </motion.div>
+
+                        <motion.div
+                            initial={{ opacity: 0, y: 50 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ duration: 0.5, ease: "easeOut", delay: 1.2 }}
+                        >
+                            <a
+                                href="#information"
+                                className="sm:text-base text-sm font-semibold rounded-full border px-5 py-3 text-gray-900 dark:text-gray-200 dark:border-gray-200"
+                            >
+                                Learn more <span aria-hidden="true">↓</span>
+                            </a>
+                        </motion.div>
+                    </div>
+                </div>
+            </div>
+
+            {/* Bottom Background - Positioned Bottom-Left */}
+            <div
+                aria-hidden="true"
+                className="absolute bottom-[5%] left-[5%] z-0 transform-gpu blur-3xl overflow-hidden sm:w-fit w-1/2"
+            >
+                <div
+                    style={{
+                        clipPath:
+                        "polygon(13% 14%, 12% 43%, 15% 69%, 24% 82%, 41% 87%, 59% 84%, 65% 76%, 55% 67%, 45% 59%, 46% 41%, 46% 24%, 45% 19%, 32% 10%)",
+                    }}
+                    className="relative h-[500px] aspect-[1155/678] w-[32.125rem] rotate-x-180 -rotate-y-180 bg-gradient-to-tr from-gray-100 to-green-500 opacity-30"
+                />
+            </div>
         </div>
-      </div>
-    </div>
-  );
+
+
+
+          <div className="overflow-hidden pt-24 pb-10 w-full" id='information'>
+            <div className="mx-auto max-w-7xl px-6 lg:px-8">
+                <div className="mx-auto grid max-w-2xl grid-cols-1 gap-x-8 gap-y-16 sm:gap-y-20 lg:mx-0 lg:max-w-none lg:grid-cols-2">
+                <div className="lg:pt-4 lg:pr-8">
+                    <div className="lg:max-w-lg">
+                    <h2 className="text-base/7 font-semibold text-emerald-600">Succeed with the Right CFA Provider</h2>
+                    <p className="mt-2 text-3xl font-semibold tracking-tight text-pretty text-gray-900 dark:text-gray-200 sm:text-5xl">
+                    Your Path to a CFA <span className="text-green-500">Certification</span>
+                    </p>
+                    <p className="mt-5 sm:text-lg/8 text-sm text-gray-600 dark:text-gray-300">
+                    Choosing the right CFA course provider can make or break your success. A well-structured program ensures you stay on track, grasp key concepts, and pass on your first attempt.
+                    </p>
+                    <dl className="mt-7 max-w-xl space-y-5 text-base/7 text-gray-600 lg:max-w-none">
+                        <div className="relative pl-9">
+                            <dt className="inline font-semibold text-gray-900 dark:text-gray-200">
+                            Comprehensive Study Material:&nbsp;
+                            </dt>
+                            <dd className="inline dark:text-gray-300">A top-tier provider offers in-depth study materials, mock exams, and real-world examples, helping you fully understand complex financial topics.</dd>
+                        </div>
+                        <div className="relative pl-9">
+                            <dt className="inline font-semibold text-gray-900 dark:text-gray-200">
+                            Expert Guidance & Support:&nbsp;
+                            </dt>
+                            <dd className="inline dark:text-gray-300">Having access to experienced instructors and a support network can make a huge difference in your learning journey, giving you clarity on tough concepts.</dd>
+                        </div>
+                        <div className="relative pl-9">
+                            <dt className="inline font-semibold text-gray-900 dark:text-gray-200">
+                            Efficient Learning Strategies:&nbsp; 
+                            </dt>
+                            <dd className="inline dark:text-gray-300">The best providers use adaptive learning, practice questions, and performance analytics to help you maximize efficiency and retain information effectively.</dd>
+                        </div>
+                    </dl>
+                    </div>
+                </div>
+                {/* Light mode image */}
+                    <img
+                    alt="Product screenshot light"
+                    src="/images/imagelight.jpg"
+                    width={2432}
+                    height={1442}
+                    className="w-[48rem] sm:block max-w-none sm:w-[57rem] md:-ml-4 lg:-ml-0 dark:hidden"
+                    />
+
+                    {/* Dark mode image */}
+                    <img
+                    alt="Product screenshot dark"
+                    src="/images/imagedark.jpg"
+                    width={2432}
+                    height={1442}
+                    className="w-[48rem] max-w-none sm:w-[57rem] md:-ml-4 lg:-ml-0 hidden dark:sm:block"
+                    />
+
+                </div>
+            </div>
+        </div>
+
+       <div className="lg:flex block justify-between items-center py-5 mb-3 w-full">
+            <div className="lg:w-6/12 w-full">
+                <div className='text-center mx-auto'>
+                    <h1 className="text-5xl font-semibold tracking-tight text-gray-900 dark:text-gray-200 sm:text-6xl px-5">Find your <span className="text-green-500">Provider</span> based on the following <span className="text-green-500">Criteria:</span></h1>
+                    
+                </div>
+            </div>
+
+            <div className="lg:w-7/12 w-full lg:py-16 py-6 px-4 lg:border-t-2 lg:border-b-2 lg:border-l-2 border-green-500 bg-gray-50 dark:bg-zinc-800 rounded-s-2xl">
+                <div className="w-11/12 mx-auto showcardswhenbig">
+                    <Slider {...settings}>
+                        {cards.map((card) => (
+                            <div key={card.id} className="lg:p-4 p-2 bg-white dark:bg-zinc-700 mb-4 rounded-lg shadow-md">
+                                <h3 className="font-semibold tracking-tight text-green-500 sm:text-3xl text-lg mb-1">{card.title}</h3>
+                                <p className="text-gray-500 dark:text-gray-300 sm:text-base text-xs">{card.description}</p>
+                            </div>
+                        ))}
+                    </Slider>
+                </div>
+                <div className="w-11/12 mx-auto hidecardswhentosmall">
+                        {cards.map((card) => (
+                            <div key={card.id} className="lg:p-4 p-2 bg-white dark:bg-zinc-700  mb-4 rounded-lg shadow-md">
+                                <h3 className="font-semibold tracking-tight text-green-500 sm:text-3xl text-lg mb-1">{card.title}</h3>
+                                <p className="text-gray-500 dark:text-gray-300 sm:text-base text-xs">{card.description}</p>
+                            </div>
+                        ))}
+                </div>
+            </div>
+        </div>
+
+    </>
+    );
 }

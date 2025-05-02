@@ -16,8 +16,6 @@ export async function POST(req: NextRequest) {
     }
 
     storedRatings = body;
-    console.log("Received ratings:", storedRatings);
-
     // Fetch providers from Supabase
     const { data: providers, error } = await supabase.from("providers").select();
 
@@ -28,7 +26,6 @@ export async function POST(req: NextRequest) {
 
     // Rank providers based on user input
     rankedProviders = rankProviders(storedRatings, providers);
-    console.log("Ranked Providers:", rankedProviders);
 
     return NextResponse.json({ rankedProviders }, { status: 200 });
 
