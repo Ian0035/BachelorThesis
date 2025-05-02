@@ -1,15 +1,11 @@
-'use server';
-
 import chromium from '@sparticuz/chromium';
-import type { Browser } from 'puppeteer-core'; // ✅ Import type only
-let puppeteer: typeof import('puppeteer-core');
+import puppeteer, { Browser } from 'puppeteer-core';
+import type { VercelRequest, VercelResponse } from '@vercel/node';
 
-export async function GET() {
-  puppeteer = (await import('puppeteer-core')).default as any;;
+export default async function handler(req: VercelRequest, res: VercelResponse) {
   let browser: Browser | null = null;
 
-
-  async function isCertifiedProvider(providerName: string) {
+  const isCertifiedProvider = async (providerName: string) => {
     if (!browser) {
       throw new Error('Browser instance is not initialized');
     }
@@ -17,11 +13,9 @@ export async function GET() {
     const url = `https://www.cfainstitute.org/programs/cfa-program/prep-providers#q=${encodeURIComponent(providerName)}&sortCriteria=%40titlebasic%20ascending`;
 
     await page.goto(url, { waitUntil: 'domcontentloaded' });
-
-    // Wait for dynamic content to load
-    await new Promise(resolve => setTimeout(resolve, 3000));
+    await new Promise((r) => setTimeout(r, 3000));
     await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
-    await new Promise(resolve => setTimeout(resolve, 1000));
+    await new Promise((r) => setTimeout(r, 1000));
     await page.waitForSelector('atomic-result-list');
 
     const linkText = await page.evaluate(() => {
@@ -31,15 +25,15 @@ export async function GET() {
 
       const atomicResultList = document.querySelector('atomic-result-list');
       const resultListShadow = getShadowRoot(atomicResultList);
-      if (!resultListShadow) return 'atomic-result-list shadowRoot missing';
+      if (!resultListShadow) return '';
 
       const firstResult = resultListShadow.querySelector('atomic-result:nth-child(1)');
       const firstResultShadow = getShadowRoot(firstResult);
-      if (!firstResultShadow) return 'atomic-result shadowRoot missing';
+      if (!firstResultShadow) return '';
 
       const item = firstResultShadow.querySelector('prep-providers-result-item');
       const itemShadow = getShadowRoot(item);
-      if (!itemShadow) return 'prep-providers-result-item shadowRoot missing';
+      if (!itemShadow) return '';
 
       const link = itemShadow.querySelector('div > div > div > div.content__title > a');
       return link?.textContent?.trim().toLowerCase() ?? '';
@@ -47,7 +41,7 @@ export async function GET() {
 
     await page.close();
     return linkText === providerName.toLowerCase();
-  }
+  };
 
   try {
     browser = await puppeteer.launch({
@@ -64,7 +58,6 @@ export async function GET() {
     ];
 
     const results = [];
-
     for (const provider of providers) {
       const certified = await isCertifiedProvider(provider.name);
       results.push({
@@ -76,17 +69,10 @@ export async function GET() {
 
     await browser.close();
 
-    return new Response(JSON.stringify(results), {
-      status: 200,
-      headers: { "Content-Type": "application/json" },
-    });
-
+    res.status(200).json(results);
   } catch (err) {
     console.error('Scraping error:', err);
     if (browser) await browser.close();
-    return new Response(JSON.stringify({ error: 'Scraping failed' }), {
-      status: 500,
-      headers: { "Content-Type": "application/json" },
-    });
+    res.status(500).json({ error: 'Scraping failed' });
   }
 }
