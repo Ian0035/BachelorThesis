@@ -1,10 +1,10 @@
 const puppeteer = require('puppeteer');
 
-export async function GET(req) {
+export async function GET() {
   const browser = await puppeteer.launch({ headless: false });
   const page = await browser.newPage();
 
-  async function isCertifiedProvider(providerName) {
+  async function isCertifiedProvider(providerName: string | number | boolean) {
     const url = `https://www.cfainstitute.org/programs/cfa-program/prep-providers#q=${encodeURIComponent(providerName)}&sortCriteria=%40titlebasic%20ascending`;
     await page.goto(url, { waitUntil: 'domcontentloaded' });
 
@@ -20,7 +20,7 @@ export async function GET(req) {
 
     const LinkText = await page.evaluate(() => {
       // Helper function to safely access shadow roots
-      function getShadowRoot(el) {
+      function getShadowRoot(el: Element | null) {
         return el ? el.shadowRoot : null;
       }
       const atomicResultList = document.querySelector('atomic-result-list');
@@ -38,9 +38,9 @@ export async function GET(req) {
       const link = itemShadow.querySelector('div > div > div > div.content__title > a');
       if (!link) return 'link not found';
 
-      return link.textContent.trim().toLowerCase(); // Get the text content of the link and convert to lowercase
+      return link.textContent ? link.textContent.trim().toLowerCase() : ''; // Get the text content of the link and convert to lowercase, or return an empty string if null
     });
-    if (LinkText === providerName.toLowerCase()) {
+    if (typeof providerName === 'string' && LinkText === providerName.toLowerCase()) {
         return true; // Provider is certified
     }
       return false; // Provider is not certified')       
