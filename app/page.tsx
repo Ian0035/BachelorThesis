@@ -26,27 +26,27 @@ export default function Index() {
         {
           id: 1,
           title: 'Content Coverage',
-          description: 'Ensuring comprehensive content coverage is crucial for mastering all key concepts and avoiding knowledge gaps. Without thorough coverage, students may struggle with advanced topics, leading to a weaker overall understanding.',
+          description: 'Content coverage measures how well a course’s material aligns with the CFA curriculum, covering all key topics clearly and thoroughly to support strong understanding and exam success.',
         },
         {
           id: 2,
           title: 'Practice Resources',
-          description: 'Having ample practice resources is essential for reinforcing learning and building confidence in applying knowledge. Regular practice helps identify weak areas, improve problem-solving skills, and solidify concepts over time.',
+          description: 'Practice resources evaluate the quality and relevance of mock exams and question banks, focusing on how well they reflect CFA exam difficulty, format, and provide clear, helpful explanations.',
         },
         {
           id: 3,
           title: 'Flexibility and Accessibility',
-          description: 'Learning should fit into your schedule, making flexible and accessible resources vital for consistent progress. The ability to study at your own pace and access materials on-demand ensures a smoother and more efficient learning experience.',
+          description: 'Flexibility and accessibility assess how easily study materials can be accessed and used, considering device compatibility, online/offline availability, and how well the course adapts to different schedules.',
         },
         {
           id: 4,
           title: 'Student Support',
-          description: 'Access to reliable student support can make a significant difference in overcoming challenges and staying motivated. Whether through mentors, forums, or live Q&A sessions, having guidance can help clarify doubts and maintain engagement.',
+          description: 'Student support evaluates the availability of academic help, including access to tutors, discussion forums, personalized feedback, and guidance with study planning to enhance learning and engagement.',
         },
         {
           id: 5,
           title: 'Cost-effectiveness',
-          description: 'Investing in education should be affordable, ensuring that quality learning remains accessible to all. A well-structured cost-effective approach allows students to gain valuable knowledge without financial strain, making learning more sustainable.',
+          description: 'Cost-effectiveness measures the overall value of a course, weighing content quality and support against the price, while also considering refund policies, hidden fees, and included resources.',
         },
       ];
 
@@ -75,7 +75,7 @@ export default function Index() {
             </div>
 
             {/* Main Content */}
-            <div className="relative isolate px-6 sm:pt-14 pt-4 lg:px-8">
+            <div className="relative isolate px-6 sm:pt-14 pt-4 lg:px-8 z-10">
                 <div className="mx-auto max-w-2xl py-10 sm:py-32 lg:pt-16 lg:pb-28">
                     <div className="text-center relative z-10">
                         <motion.h1
@@ -113,7 +113,7 @@ export default function Index() {
                                     router.push('/tool');
                                     });
                                 }}
-                                className="rounded-md bg-green-500 px-5 py-3 sm:text-base text-sm font-semibold text-white dark:text-gray-200 shadow-xs hover:bg-green-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-600"
+                                className="z-10 rounded-md bg-green-500 px-5 py-3 sm:text-base text-sm font-semibold text-white dark:text-gray-200 shadow-xs hover:bg-green-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-600"
                             >
                                {isPending ? "Loading..." : "Do the test"}
                             </Link>
@@ -162,26 +162,25 @@ export default function Index() {
                     Your Path to a CFA <span className="text-green-500">Certification</span>
                     </p>
                     <p className="mt-5 sm:text-lg/8 text-sm text-gray-600 dark:text-gray-300">
-                    Choosing the right CFA course provider can make or break your success. A well-structured program ensures you stay on track, grasp key concepts, and pass on your first attempt.
-                    </p>
+                    Choosing a CFA course provider isn’t just about finding the highest-rated option — it’s about finding the one that fits you!</p>
                     <dl className="mt-7 max-w-xl space-y-5 text-base/7 text-gray-600 lg:max-w-none">
                         <div className="relative pl-9">
                             <dt className="inline font-semibold text-gray-900 dark:text-gray-200">
-                            Comprehensive Study Material:&nbsp;
+                            Tailored Study Materials:&nbsp;
                             </dt>
-                            <dd className="inline dark:text-gray-300">A top-tier provider offers in-depth study materials, mock exams, and real-world examples, helping you fully understand complex financial topics.</dd>
+                            <dd className="inline dark:text-gray-300">A good provider aligns with how you learn — whether that’s visual content, structured readings, or real-world examples that bring concepts to life.</dd>
                         </div>
                         <div className="relative pl-9">
                             <dt className="inline font-semibold text-gray-900 dark:text-gray-200">
-                            Expert Guidance & Support:&nbsp;
+                            Support That Matches Your Needs:&nbsp;
                             </dt>
-                            <dd className="inline dark:text-gray-300">Having access to experienced instructors and a support network can make a huge difference in your learning journey, giving you clarity on tough concepts.</dd>
+                            <dd className="inline dark:text-gray-300">Some learners need personal guidance, while others thrive independently. Choose a provider with support systems that work for you, from active forums to one-on-one tutoring.</dd>
                         </div>
                         <div className="relative pl-9">
                             <dt className="inline font-semibold text-gray-900 dark:text-gray-200">
-                            Efficient Learning Strategies:&nbsp; 
+                            Learning on Your Terms:&nbsp; 
                             </dt>
-                            <dd className="inline dark:text-gray-300">The best providers use adaptive learning, practice questions, and performance analytics to help you maximize efficiency and retain information effectively.</dd>
+                            <dd className="inline dark:text-gray-300">Whether you’re working full-time or studying on weekends, flexibility in access and pacing ensures your prep fits smoothly into your life.</dd>
                         </div>
                     </dl>
                     </div>

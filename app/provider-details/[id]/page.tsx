@@ -4,8 +4,6 @@ import { Star } from "lucide-react";
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs"; // ✅ Correct Supabase Client
-import { Reviews } from "@mui/icons-material";
-
 
 interface Provider {
   id: number;
@@ -344,7 +342,7 @@ export default function ProviderDetails() {
                   ))}
                 </div>
                   <button
-                    className="mt-2 px-4 py-2 font-semibold text-black dark:text-gray-300 bg-green-500 rounded-lg hover:bg-green-600"
+                    className="mt-2 px-4 py-2 font-semibold text-white dark:text-gray-300 bg-green-500 rounded-lg hover:bg-green-600"
                     onClick={handleReviewEdit} // This will handle the review editing
                   >
                     Edit Review

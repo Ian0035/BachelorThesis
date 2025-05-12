@@ -12,9 +12,6 @@ const AdminCheck = ({ children }: { children: React.ReactNode }) => {
 
     if (!adminStatus) {
       router.push("/"); // ✅ Redirect immediately
-      setTimeout(() => {
-        window.dispatchEvent(new CustomEvent("openLoginModal"));
-      }, 100);
     } else {
       setIsAdmin(true);
     }

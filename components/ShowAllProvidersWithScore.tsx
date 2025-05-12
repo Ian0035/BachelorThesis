@@ -122,7 +122,7 @@ const ShowAllProvidersWithScore = ({ providers = [] }: { providers?: Provider[] 
           <p>Flexibility & Accessibility: <span className='font-semibold text-lg'>{provider.flexibilityAccessibility}</span></p>
           <p>Student Portal: <span className='font-semibold text-lg'>{provider.studentPortal}</span></p>
           <p>Cost Effectiveness: <span className='font-semibold text-lg'>{provider.costEffectiveness}</span></p>
-          <p>Price: <span className='font-semibold text-lg'>{provider.certified || 'N/A'}</span></p>
+          <p>certified: <span className='font-semibold text-lg'>{provider.certified || 'N/A'}</span></p>
         </div>
 
       ))}

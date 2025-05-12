@@ -4,7 +4,6 @@ import { useState, useEffect } from "react";
 import { Tooltip } from "@mui/material";
 import { Info } from "lucide-react";
 import { useRouter } from "next/navigation"; // Import Next.js router
-import dynamic from "next/dynamic";
 import { motion, AnimatePresence } from "framer-motion";
 
 
@@ -51,7 +50,6 @@ export default function Index() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(scores),
       });
-
       if (!response.ok) throw new Error("Failed to save scores.");
 
       const data = await response.json();

@@ -27,33 +27,6 @@ const Navbar = ({ toggle }: { toggle: () => void }) => {
   const pathname = usePathname();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   
-
-
-  // ✅ Check authentication status when component mounts
-  useEffect(() => {
-    const storedAuth = localStorage.getItem("isAuthenticated");
-    const storedAdmin = localStorage.getItem("isAdmin");
-    if (storedAuth === "true") {
-      setIsAuthenticated(true);
-    }
-    if (storedAdmin === "true") {
-      setIsAdmin(true);
-    }
-  }, []);
-
-  // Add a separate effect to handle the modal autofocus
-  useEffect(() => {
-    if (isModalOpen && emailInputRef.current) {
-      emailInputRef.current.focus();
-    }
-  }, [isModalOpen]);
-  // Add a separate effect to handle the modal autofocus
-  useEffect(() => {
-    if (isSignUpModalOpen && emailInputRef.current) {
-      emailInputRef.current.focus();
-    }
-  }, [isSignUpModalOpen]);
-
   useEffect(() => {
     const storedAuth = localStorage.getItem("isAuthenticated");
     const storedAdmin = localStorage.getItem("isAdmin");
@@ -69,6 +42,19 @@ const Navbar = ({ toggle }: { toggle: () => void }) => {
       setEmail(storedEmail);
     }
   }, []);
+  
+  // Add a separate effect to handle the modal autofocus
+  useEffect(() => {
+    if (isModalOpen && emailInputRef.current) {
+      emailInputRef.current.focus();
+    }
+  }, [isModalOpen]);
+  // Add a separate effect to handle the modal autofocus
+  useEffect(() => {
+    if (isSignUpModalOpen && emailInputRef.current) {
+      emailInputRef.current.focus();
+    }
+  }, [isSignUpModalOpen]);
 
   const toggleDarkMode = () => {
     setDarkMode(!darkMode);
@@ -188,7 +174,7 @@ const Navbar = ({ toggle }: { toggle: () => void }) => {
               <input 
                 type="checkbox" 
                 checked={darkMode} 
-                onChange={toggleDarkMode}  
+                onChange={toggleDarkMode} 
                 className="sr-only peer"
               />
               <div className="relative w-11 h-6 mx-auto bg-gray-700 peer-focus:outline-none peer-focus:ring-4 peer-focus:bg-gray-700 dark:peer-focus:bg-white rounded-full peer dark:bg-white peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-gray-500 after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-gray-500 after:border-gray-500 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-white dark:peer-checked:bg-white"></div>

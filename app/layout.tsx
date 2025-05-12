@@ -1,7 +1,6 @@
 import Navigation from "../components/navigation";
 import { GeistSans } from 'geist/font/sans'
 import './globals.css'
-import { Component } from "lucide-react";
 import Footer from "@/components/footer";
 
 const defaultUrl = process.env.VERCEL_URL
