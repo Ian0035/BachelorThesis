@@ -17,5 +17,5 @@ To run the application on your local machine, follow these steps:
 2. Download node.js (Version > 18)
 3. ```npm install```
 4. ```npm run dev```-> The project will be accessible at http://localhost:3000.
-5.⚠️ The application requires database credentials that are not included in this repository. If you are interested in running the full version with Supabase integration, please contact me at:
+5. ⚠️ The application requires database credentials that are not included in this repository. If you are interested in running the full version with Supabase integration, please contact me at:
 ian.hoogstrate@students.bfh.ch or check the written bachelor thesis for the credentials.
