@@ -52,7 +52,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     });
 
     const providers = [
-      { id: 1, name: 'kaplan' },
+      { id: 1, name: 'kaplan schweser' },
       { id: 2, name: 'fitch learning' },
       { id: 3, name: 'analyst prep' },
     ];
