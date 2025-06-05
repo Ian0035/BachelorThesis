@@ -7,11 +7,6 @@ const AdminCheck = ({ children }: { children: React.ReactNode }) => {
   const [isAdmin, setIsAdmin] = useState<boolean | null>(null);
   const router = useRouter();
 
-  // 🔒 Prevents flashing of protected content
-  if (isAdmin === null) {
-    return null; // ✅ Show nothing while checking auth
-  }
-
   useEffect(() => {
     const adminStatus = localStorage.getItem("isAdmin");
 
@@ -21,6 +16,11 @@ const AdminCheck = ({ children }: { children: React.ReactNode }) => {
       setIsAdmin(true);
     }
   }, []);
+
+  // 🔒 Prevents flashing of protected content
+  if (isAdmin === null) {
+    return null; // ✅ Show nothing while checking auth
+  }
 
   return <>{children}</>;
 };
